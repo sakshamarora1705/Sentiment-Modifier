@@ -5,16 +5,19 @@ import random
 dictionary = PyDictionary()
 client = language.LanguageServiceClient()
 alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
 def sentiment(content):
     # Returns a list containing the sentiment of each sentence given.
     document = language.types.Document(content = content, language = 'en', type = 'PLAIN_TEXT')
     response = client.analyze_sentiment(document = document, encoding_type = 'UTF32')
     return [response.sentences[i].sentiment.score for i in range(len(response.sentences))]
+
 def overall_sentiment(content):
     # Returns a single value containing the sentiment of the entire string of text.
     document = language.types.Document(content = content, language = 'en', type = 'PLAIN_TEXT')
     response = client.analyze_sentiment(document = document, encoding_type = 'UTF32')
     return response.document_sentiment.score
+
 def good_word(word):
     if len(word) < 4:
         return False
@@ -23,6 +26,7 @@ def good_word(word):
     if not ('Adjective' in dictionary.meaning(word) or 'Adverb' in dictionary.meaning(word)):
         return False
     return True
+
 def synonyms(word):
     # Returns a list of synonyms of a given word, along with their sentiments.
     # Should make this more sophisticated to avoid grammar mistakes.
@@ -35,6 +39,7 @@ def synonyms(word):
         sentence += (i + ". ")
     sentiments = sentiment(sentence) + [0]
     return [[allSynonyms[i], sentiments[i]] for i in range(len(allSynonyms))]
+
 def reduce_sentiment(content):
     words = content.split(" ")
     change_index = random.randint(0, len(words) - 1)
@@ -46,6 +51,7 @@ def reduce_sentiment(content):
             lowest = possible_changes[i]
     words[change_index] = lowest[0]
     return " ".join(words)
+
 def create_list(content):
     current = ""
     l = []
@@ -62,6 +68,7 @@ def create_list(content):
         l.append(current)
     print(l)
     return l
+
 def increase_sentiment(content):
     words = create_list(content)
     change_index = random.randint(0, len(words) - 1)
@@ -73,6 +80,7 @@ def increase_sentiment(content):
             highest = possible_changes[i]
     words[change_index] = highest[0]
     return " ".join(words)
+
 def change_sentiment(content, newSentiment):
     currentSentiment = overall_sentiment(content)
     changed = content
@@ -89,6 +97,7 @@ def change_sentiment(content, newSentiment):
             if currentSentiment > newSentiment:
                 return change
     return changed
+
 def remove_spaces(content):
     modified = ""
     for i in range(len(content) - 1):
@@ -97,6 +106,7 @@ def remove_spaces(content):
     return modified + content[len(content) - 1]
 #print(change_sentiment("I am having a good day. It is good.", 1))
 #print(remove_spaces("I am having a good day ."))
+
 class Modifier(tkinter.Tk):
     def __init__(self):
         tkinter.Tk.__init__(self)
